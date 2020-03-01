@@ -1,5 +1,6 @@
-from PySide2.QtWidgets import QWidget, QLineEdit, QListWidget, QListWidgetItem, QVBoxLayout
-
+from PySide2.QtWidgets import QWidget, QLineEdit, QListWidget, QListWidgetItem, \
+    QVBoxLayout, QItemDelegate
+from PySide2.QtCore import QSize
 from utilities.dummy_data import create_dummy_data
 
 movies_data = create_dummy_data(100)
@@ -22,6 +23,14 @@ class MovieBrowser(QWidget):
 class IconView(QListWidget):
     def __init__(self):
         super(IconView, self).__init__()
+        self.setItemDelegate(IconViewDelegate())
+        self.setSpacing(10)
+
+        self.setViewMode(QListWidget.IconMode)
+        self.setResizeMode(QListWidget.Adjust)
+        self.setMovement(QListWidget.Static)
+        self.setSelectionMode(QListWidget.ExtendedSelection)
+
         self.refresh()
 
     def refresh(self):
@@ -31,10 +40,20 @@ class IconView(QListWidget):
             MovieItem(self, movie)
 
 
+class IconViewDelegate(QItemDelegate):
+    def __init__(self):
+        super(IconViewDelegate, self).__init__()
+
+    def paint(self, painter, option, index):
+        rect = option.rect
+        painter.drawRect(rect)
+
+
 class MovieItem(QListWidgetItem):
     def __init__(self, parent, movie_data):
         super(MovieItem, self).__init__(parent)
         self.movie_data = movie_data
+        self.setSizeHint(QSize(480, 270))
 
         self.setText(movie_data.get("title"))
 
