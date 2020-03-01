@@ -6,7 +6,6 @@ posters = [os.path.join(images_folder, i) for i in os.listdir(images_folder)]
 description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 
 
-
 def create_dummy_data(number=10):
     import random
     movie_list = []
@@ -14,17 +13,18 @@ def create_dummy_data(number=10):
     titles = [
         "Shark",
         "Alien",
-        "Terminator",
+        "Parasite",
         "Star Wars",
-        "Star Trek"
+        "Charlie's Angels",
+        "Ad Astra",
     ]
 
     years = [
-        1970,
-        1980,
-        1990,
-        2000,
-        2010,
+        "December 4, 2019",
+        "February 26, 2020",
+        "May 30, 2019",
+        "February 5, 2020",
+        "October 2, 2019",
     ]
 
     genres = [
@@ -39,7 +39,7 @@ def create_dummy_data(number=10):
         movie_list.append(
             {
                 "title": random.choice(titles),
-                "year": random.choice(years),
+                "release_date": random.choice(years),
                 "genre": random.choice(genres),
                 "poster": random.choice(posters),
                 "description": description
