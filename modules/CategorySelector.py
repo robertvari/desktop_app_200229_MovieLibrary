@@ -46,3 +46,5 @@ class CategoryItem(QTreeWidgetItem):
     def __init__(self, parent, name):
         super(CategoryItem, self).__init__(parent)
         self.setText(0, str(name))
+
+        self.setExpanded(True)
