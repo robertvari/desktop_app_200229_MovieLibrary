@@ -4,6 +4,7 @@ import sys
 
 from modules.CategorySelector import CategorySelector
 from modules.MovieBrowser import MovieBrowser
+from modules.AddMovieDialog import AddMovieDialog
 
 
 class MovieLibrary(QMainWindow):
@@ -41,7 +42,10 @@ class MovieLibrary(QMainWindow):
         main_layout.addWidget(self.movie_browser)
 
     def add_movie_action(self):
-        print("Add movie clicked")
+        dialog = AddMovieDialog(self)
+
+        if dialog.exec_():
+            print("Dialog accepted", dialog.selected_movie)
 
     def edit_movie_action(self):
         print("Edit selected movie")
