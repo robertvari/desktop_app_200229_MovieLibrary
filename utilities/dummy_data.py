@@ -20,11 +20,23 @@ def create_dummy_data(number=10):
     ]
 
     years = [
-        "December 4, 2019",
-        "February 26, 2020",
-        "May 30, 2019",
-        "February 5, 2020",
-        "October 2, 2019",
+        "September 8, 2011",
+        "September 8, 2011",
+        "September 8, 2011",
+        "September 8, 2011",
+        "September 8, 2011",
+    ]
+
+    directors = [
+        "Dave Wilson",
+        "James Gray",
+        "J.J. Abrams",
+    ]
+
+    writers = [
+        "Dave Wilson",
+        "James Gray",
+        "J.J. Abrams",
     ]
 
     genres = [
@@ -42,7 +54,10 @@ def create_dummy_data(number=10):
                 "release_date": random.choice(years),
                 "genre": random.choice(genres),
                 "poster": random.choice(posters),
-                "description": description
+                "description": description,
+                "user_score": random.randint(0, 100),
+                "director": random.choice(directors),
+                "writer": random.choice(writers),
             }
         )
 
