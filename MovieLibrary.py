@@ -1,5 +1,5 @@
 from PySide2.QtWidgets import QMainWindow, QApplication, QHBoxLayout, \
-    QWidget
+    QWidget, QAction
 import sys
 
 from modules.CategorySelector import CategorySelector
@@ -12,6 +12,23 @@ class MovieLibrary(QMainWindow):
         self.resize(800, 600)
         self.setWindowTitle("Movie Library")
 
+        # menu
+        menu = self.menuBar()
+
+        movies_menu = menu.addMenu("Movies")
+
+        add_movie_action = QAction("Add Movie", movies_menu)
+        add_movie_action.triggered.connect(self.add_movie_action)
+        movies_menu.addAction(add_movie_action)
+
+        edit_movie_action = QAction("Edit Movie", movies_menu)
+        edit_movie_action.triggered.connect(self.edit_movie_action)
+        movies_menu.addAction(edit_movie_action)
+
+        delete_movie_action = QAction("Delete Movie", movies_menu)
+        delete_movie_action.triggered.connect(self.delete_movie_action)
+        movies_menu.addAction(delete_movie_action)
+
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
 
@@ -22,6 +39,15 @@ class MovieLibrary(QMainWindow):
 
         self.movie_browser = MovieBrowser()
         main_layout.addWidget(self.movie_browser)
+
+    def add_movie_action(self):
+        print("Add movie clicked")
+
+    def edit_movie_action(self):
+        print("Edit selected movie")
+
+    def delete_movie_action(self):
+        print("Delete selected movies")
 
 
 if __name__ == '__main__':
