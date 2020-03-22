@@ -9,7 +9,7 @@ class AddMovieDialog(QDialog):
         self.setWindowTitle("Add Movie")
         main_layout = QVBoxLayout(self)
 
-        self.selected_movie = None
+        self.selected_movies = None
 
         self.search_field = QLineEdit()
         self.search_field.returnPressed.connect(self.find_action)
@@ -17,6 +17,7 @@ class AddMovieDialog(QDialog):
         main_layout.addWidget(self.search_field)
 
         self.result_list = QListWidget()
+        self.result_list.setSelectionMode(QListWidget.ExtendedSelection)
         main_layout.addWidget(self.result_list)
 
         button_layout = QHBoxLayout()
@@ -34,11 +35,11 @@ class AddMovieDialog(QDialog):
         event.ignore()
 
     def accept(self):
-        selected_item = self.result_list.currentItem()
-        if not selected_item:
+        selected_items = self.result_list.selectedItems()
+        if not selected_items:
             return
 
-        self.selected_movie = selected_item.movie_data
+        self.selected_movies = [i.movie_data for i in selected_items]
         super(AddMovieDialog, self).accept()
 
     def find_action(self):

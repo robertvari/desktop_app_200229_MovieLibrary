@@ -1,9 +1,10 @@
 from PySide2.QtWidgets import QWidget, QLineEdit, QListWidget, QListWidgetItem, \
-    QVBoxLayout, QItemDelegate
-from PySide2.QtGui import QColor, QPen, QBrush, QPixmap, QFont
-from PySide2.QtCore import QSize, Qt, QRect
+    QVBoxLayout, QItemDelegate, QPushButton, QHBoxLayout
+from PySide2.QtGui import QColor, QPen, QBrush, QPixmap, QFont, QImage
+from PySide2.QtCore import QSize, Qt, QRect, Signal, QThread
 
-from utilities.image_utils import get_image_data
+import time
+
 from nodes.movie import Movie
 
 
@@ -35,14 +36,30 @@ class IconView(QListWidget):
 
         self.refresh()
 
+    def set_favorited_action(self, movie):
+        value = not movie.favorited
+        movie.set_favorited(value)
+
+        self.repaint()
+
+    def delete_movie(self, movie):
+        movie.delete()
+        self.refresh()
+
     def refresh(self):
         self.clear()
 
-        for movie in Movie.get_all():
-            MovieItem(self, movie)
+        self.movie_worker = MovieWorker()
+        self.movie_worker.movie_finished.connect(self.movie_ready)
+        self.movie_worker.start()
+
+    def movie_ready(self, data_dict):
+        movie_item = MovieItem(self, data_dict["movie"], data_dict["image"])
+        movie_item.widget.delete_clicked.connect(self.delete_movie)
 
     def add_movie(self, movie):
-        MovieItem(self, movie)
+        movie_item = MovieItem(self, movie, QImage(movie.get_poster()))
+        movie_item.widget.delete_clicked.connect(self.delete_movie)
 
 
 class IconViewDelegate(QItemDelegate):
@@ -59,6 +76,7 @@ class IconViewDelegate(QItemDelegate):
         self.outline = QPen(QColor(0, 0, 0, 30))
         self.font_pen = QPen(QColor(0, 0, 0, 150))
         self.poster_background = QBrush(QColor("black"))
+        self.favorited_background = QBrush(QColor("lightBlue"))
 
         self.font = QFont()
 
@@ -68,13 +86,17 @@ class IconViewDelegate(QItemDelegate):
 
     def paint(self, painter, option, index):
         rect = option.rect
-
-        painter.setPen(self.outline)
-        painter.setBrush(Qt.NoBrush)
-        painter.drawRect(rect)
-
         movie = index.data(Qt.UserRole)
         poster = index.data(Qt.UserRole + 1)
+
+        painter.setPen(self.outline)
+
+        if movie.favorited:
+            painter.setBrush(self.favorited_background)
+        else:
+            painter.setBrush(Qt.NoBrush)
+
+        painter.drawRect(rect)
 
         # draw poster
         self.poster_rect.setRect(rect.x()+2, rect.y() + 2, poster.width(), poster.height() -4)
@@ -106,16 +128,71 @@ class IconViewDelegate(QItemDelegate):
 
 
 class MovieItem(QListWidgetItem):
-    def __init__(self, parent, movie):
+    def __init__(self, parent, movie, image):
         super(MovieItem, self).__init__(parent)
         self.movie = movie
         self.setSizeHint(QSize(480, 270))
 
+        self.setText(movie.original_title)
+
         self.setData(Qt.UserRole, movie)
 
-        poster = QPixmap(movie.get_poster())
+        poster = QPixmap(image)
         poster = poster.scaled(QSize(200, 270), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.setData(Qt.UserRole + 1, poster)
+
+        self.widget = MovieItemWidget(movie)
+        parent.setItemWidget(self, self.widget)
+
+
+class MovieItemWidget(QWidget):
+    favorite_clicked = Signal(object)
+    delete_clicked = Signal(object)
+
+    def __init__(self, movie):
+        super(MovieItemWidget, self).__init__()
+        self.movie = movie
+
+        main_layout = QVBoxLayout(self)
+        main_layout.setAlignment(Qt.AlignBottom)
+        main_layout.setContentsMargins(190, 5, 5, 5)
+
+        button_layout = QHBoxLayout()
+        main_layout.addLayout(button_layout)
+
+        favorite_bttn = QPushButton("Favorite")
+        button_layout.addWidget(favorite_bttn)
+
+        edit_bttn = QPushButton("Edit")
+        button_layout.addWidget(edit_bttn)
+
+        delete_bttn = QPushButton("Delete")
+        button_layout.addWidget(delete_bttn)
+
+        favorite_bttn.clicked.connect(self.favorite_clicked_action)
+        delete_bttn.clicked.connect(self.delete_action)
+
+    def delete_action(self):
+        self.delete_clicked.emit(self.movie)
+
+    def favorite_clicked_action(self):
+        self.favorite_clicked.emit(self.movie)
+
+
+class MovieWorker(QThread):
+    movie_finished = Signal(dict)
+
+    def __init__(self):
+        super(MovieWorker, self).__init__()
+
+    def run(self):
+        for movie in Movie.get_all():
+            movie_dict = {
+                "movie": movie,
+                "image": QImage(movie.get_poster())
+            }
+
+            self.movie_finished.emit(movie_dict)
 
 
 if __name__ == '__main__':

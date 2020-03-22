@@ -1,9 +1,10 @@
 from utilities.database import Client
-import os, requests, shutil
+import os, requests, shutil, time
 
 client = Client()
 user_folder = os.path.join(os.path.expanduser(r"~"), "Downloads")
 poster_folder = os.path.join(user_folder, "Movie_Library")
+
 
 class Movie:
     server_path = 'https://image.tmdb.org/t/p/w300'
@@ -12,8 +13,11 @@ class Movie:
         for k, v in data.items():
             setattr(self, k, v)
 
+        if not hasattr(self, "favorited"):
+            self.favorited = False
+
     def get_poster(self):
-        if hasattr(self, "poster_path"):
+        if hasattr(self, "poster_path") and self.poster_path:
             poster_file = os.path.join(poster_folder, self.poster_path.replace("/", ""))
 
             if not os.path.exists(poster_file):
@@ -32,18 +36,25 @@ class Movie:
 
             return poster_file
 
+    def set_favorited(self, value):
+        self.favorited = value
+        self.save()
+
     def save(self):
         client.insert_movie(self.__dict__)
 
     def delete(self):
-        pass
-
-    def edit(self):
-        pass
+        client.delete_movie(self.id)
+        os.remove(self.get_poster())
 
     @staticmethod
     def get_all():
-        return [Movie(item) for item in client.get_movies()]
+        movies = []
+
+        for movie_data in client.get_movies():
+            movies.append(Movie(movie_data))
+
+        return movies
 
     def __str__(self):
         return f"{self.original_title} ({self.release_date})"

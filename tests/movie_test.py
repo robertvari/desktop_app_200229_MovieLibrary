@@ -22,8 +22,28 @@ class MovieTest(TestCase):
         poster_path = movie.get_poster()
         self.assertTrue(os.path.exists(poster_path))
 
-    def test_edit_movie(self):
-        print("test_edit_movie")
+        movie.delete()
+
+    def test_set_favorited_movie(self):
+        movie = Movie(movie_data)
+        movie.save()
+
+        movie.set_favorited(True)
+
+        # check if database gets updated
+        result = client.find_movie(movie.id)
+        self.assertTrue(result["favorited"])
+
+        movie.delete()
 
     def test_delete_movie(self):
-        print("test_delete_movie")
+        movie = Movie(movie_data)
+        movie.save()
+
+        poster_path = movie.get_poster()
+
+        movie.delete()
+        result = client.find_movie(movie.id)
+        self.assertIsNone(result)
+
+        self.assertFalse(os.path.exists(poster_path))

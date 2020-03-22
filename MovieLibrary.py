@@ -7,6 +7,7 @@ from modules.MovieBrowser import MovieBrowser
 from modules.AddMovieDialog import AddMovieDialog
 
 from nodes.movie import Movie
+from utilities import static_utils
 
 
 class MovieLibrary(QMainWindow):
@@ -43,13 +44,22 @@ class MovieLibrary(QMainWindow):
         self.movie_browser = MovieBrowser()
         main_layout.addWidget(self.movie_browser)
 
+        self.apply_style()
+
+    def apply_style(self):
+        css_path = static_utils.css_path
+        with open(css_path) as f:
+            style = f.read()
+            self.setStyleSheet(style)
+
     def add_movie_action(self):
         dialog = AddMovieDialog(self)
 
         if dialog.exec_():
-            movie = Movie(dialog.selected_movie)
-            movie.save()
-            self.movie_browser.icon_view.add_movie(movie)
+            for movie_data in dialog.selected_movies:
+                movie = Movie(movie_data)
+                movie.save()
+                self.movie_browser.icon_view.add_movie(movie)
 
     def edit_movie_action(self):
         print("Edit selected movie")
