@@ -4,14 +4,12 @@ from PySide2.QtGui import QColor, QPen, QBrush, QPixmap, QFont
 from PySide2.QtCore import QSize, Qt, QRect
 
 from utilities.image_utils import get_image_data
+from nodes.movie import Movie
 
 
 class MovieBrowser(QWidget):
-    client = None
-
-    def __init__(self, client):
+    def __init__(self):
         super(MovieBrowser, self).__init__()
-        MovieBrowser.client = client
 
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -40,9 +38,11 @@ class IconView(QListWidget):
     def refresh(self):
         self.clear()
 
-        movie_list = MovieBrowser.client.get_movies()
-        for movie in movie_list:
+        for movie in Movie.get_all():
             MovieItem(self, movie)
+
+    def add_movie(self, movie):
+        MovieItem(self, movie)
 
 
 class IconViewDelegate(QItemDelegate):
@@ -73,7 +73,7 @@ class IconViewDelegate(QItemDelegate):
         painter.setBrush(Qt.NoBrush)
         painter.drawRect(rect)
 
-        item_data = index.data(Qt.UserRole)
+        movie = index.data(Qt.UserRole)
         poster = index.data(Qt.UserRole + 1)
 
         # draw poster
@@ -89,35 +89,31 @@ class IconViewDelegate(QItemDelegate):
         # draw title
         painter.setPen(self.font_pen)
         painter.setFont(self.title_font)
-        painter.drawText(self.content_box, item_data.get('original_title'))
+        painter.drawText(self.content_box, movie.original_title)
 
         # draw release date
         painter.setFont(self.font)
         self.date_rect.setRect(self.content_box.x(), self.content_box.y() + 25, self.content_box.width(), 15)
-        painter.drawText(self.date_rect, item_data["release_date"])
+        painter.drawText(self.date_rect, movie.release_date)
 
         # director/writer
         self.vote_average.setRect(self.content_box.x(), self.date_rect.bottom() + 2, self.content_box.width(), 15)
-        painter.drawText(self.vote_average, f"Vote average: {item_data['vote_average']}")
+        painter.drawText(self.vote_average, f"Vote average: {movie.vote_average}")
 
         # description
         self.description_rect.setRect(self.content_box.x(), self.vote_average.bottom() + 20, self.content_box.width(), rect.height())
-        painter.drawText(self.description_rect, item_data["overview"])
+        painter.drawText(self.description_rect, movie.overview)
 
 
 class MovieItem(QListWidgetItem):
-    def __init__(self, parent, movie_data):
+    def __init__(self, parent, movie):
         super(MovieItem, self).__init__(parent)
-        self.movie_data = movie_data
-        server_path = 'https://image.tmdb.org/t/p/w300'
-        self.movie_data["poster_path"] = server_path + movie_data["poster_path"]
+        self.movie = movie
         self.setSizeHint(QSize(480, 270))
 
-        self.setData(Qt.UserRole, movie_data)
+        self.setData(Qt.UserRole, movie)
 
-        image_data = get_image_data(self.movie_data["poster_path"])
-        poster = QPixmap()
-        poster.loadFromData(image_data)
+        poster = QPixmap(movie.get_poster())
         poster = poster.scaled(QSize(200, 270), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.setData(Qt.UserRole + 1, poster)
 

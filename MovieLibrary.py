@@ -5,17 +5,15 @@ import sys
 from modules.CategorySelector import CategorySelector
 from modules.MovieBrowser import MovieBrowser
 from modules.AddMovieDialog import AddMovieDialog
-from utilities.database import Client
 
 from nodes.movie import Movie
+
 
 class MovieLibrary(QMainWindow):
     def __init__(self):
         super(MovieLibrary, self).__init__()
         self.resize(800, 600)
         self.setWindowTitle("Movie Library")
-
-        self.client = Client()
 
         # menu
         menu = self.menuBar()
@@ -42,7 +40,7 @@ class MovieLibrary(QMainWindow):
         self.category_selector = CategorySelector()
         main_layout.addWidget(self.category_selector)
 
-        self.movie_browser = MovieBrowser(self.client)
+        self.movie_browser = MovieBrowser()
         main_layout.addWidget(self.movie_browser)
 
     def add_movie_action(self):
@@ -51,6 +49,7 @@ class MovieLibrary(QMainWindow):
         if dialog.exec_():
             movie = Movie(dialog.selected_movie)
             movie.save()
+            self.movie_browser.icon_view.add_movie(movie)
 
     def edit_movie_action(self):
         print("Edit selected movie")

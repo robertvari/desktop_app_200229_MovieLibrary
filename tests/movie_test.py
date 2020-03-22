@@ -5,7 +5,7 @@ from nodes.movie import Movie
 from utilities.MovieDB import find_movie
 from utilities.database import Client
 
-movie_data = find_movie("Alien")[0]
+movie_data = find_movie("Star Wars")[0]
 client = Client()
 
 
