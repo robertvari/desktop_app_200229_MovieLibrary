@@ -7,6 +7,7 @@ from modules.MovieBrowser import MovieBrowser
 from modules.AddMovieDialog import AddMovieDialog
 from utilities.database import Client
 
+from nodes.movie import Movie
 
 class MovieLibrary(QMainWindow):
     def __init__(self):
@@ -48,9 +49,8 @@ class MovieLibrary(QMainWindow):
         dialog = AddMovieDialog(self)
 
         if dialog.exec_():
-            movie_data = dialog.selected_movie
-            self.client.insert_movie(movie_data)
-            print(f"Data saved for {movie_data['original_title']}.")
+            movie = Movie(dialog.selected_movie)
+            movie.save()
 
     def edit_movie_action(self):
         print("Edit selected movie")
