@@ -8,7 +8,11 @@ class Client:
         self.collection = self.db["movies"]
 
     def insert_movie(self, data):
-        self.collection.insert_one(data)
+        if not self.find_movie(data["id"]):
+            self.collection.insert_one(data)
+
+    def find_movie(self, id):
+        return self.collection.find_one({"id": id})
 
     def get_movies(self):
         return [i for i in self.collection.find()]
