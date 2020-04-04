@@ -179,9 +179,6 @@ class MovieItemWidget(QWidget):
         self.favorite_clicked.emit(self.movie)
 
 
-
-
-
 class MovieWorker(QThread):
     movie_finished = Signal(dict)
 
