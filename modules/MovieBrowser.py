@@ -16,25 +16,66 @@ class MovieBrowser(QWidget):
         main_layout.setContentsMargins(0, 0, 0, 0)
 
         self.search_field = QLineEdit()
-        self.icon_view = IconView()
+        self.movie_list_view = MovieListView()
 
         main_layout.addWidget(self.search_field)
-        main_layout.addWidget(self.icon_view)
+        main_layout.addWidget(self.movie_list_view)
 
 
-class IconView(QListWidget):
+class MovieListView(QListWidget):
     def __init__(self):
-        super(IconView, self).__init__()
+        super(MovieListView, self).__init__()
 
-        self.setItemDelegate(IconViewDelegate())
+        self.setItemDelegate(MovieListDelegate())
         self.setSpacing(10)
 
         self.setViewMode(QListWidget.IconMode)
         self.setResizeMode(QListWidget.Adjust)
-        self.setMovement(QListWidget.Static)
+        # self.setMovement(QListWidget.Static)
         self.setSelectionMode(QListWidget.ExtendedSelection)
+        self.setAcceptDrops(True)
 
         self.refresh()
+
+    def check_drag_data(self, event):
+
+        if event.mimeData().urls():
+                current_path = event.mimeData().urls()[0].toLocalFile()
+                if not current_path:
+                    current_path = event.mimeData().urls()[0].toString()
+
+                if current_path.lower().endswith(".jpg"):
+                    return True
+        return False
+
+    def dragEnterEvent(self, event):
+
+        if self.check_drag_data(event):
+            event.accept()
+        else:
+            event.ignore()
+
+    def dragMoveEvent(self, event):
+        if self.itemAt(event.pos()):
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        current_item = self.itemAt(event.pos())
+
+        # set poster for movie object
+        current_url = event.mimeData().urls()[0]
+
+        if "http" in current_url:
+            pass
+        else:
+            poster_path = event.mimeData().urls()[0].toLocalFile()
+
+        current_item.movie.set_poster(poster_path)
+
+        # refresh movie item in view
+        current_item.set_item_poster(poster_path)
 
     def set_favorited_action(self, movie):
         value = not movie.favorited
@@ -62,9 +103,9 @@ class IconView(QListWidget):
         movie_item.widget.delete_clicked.connect(self.delete_movie)
 
 
-class IconViewDelegate(QItemDelegate):
+class MovieListDelegate(QItemDelegate):
     def __init__(self):
-        super(IconViewDelegate, self).__init__()
+        super(MovieListDelegate, self).__init__()
 
         self.poster_rect = QRect()
         self.content_box = QRect()
@@ -137,12 +178,15 @@ class MovieItem(QListWidgetItem):
 
         self.setData(Qt.UserRole, movie)
 
-        poster = QPixmap(image)
-        poster = poster.scaled(QSize(200, 270), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        self.setData(Qt.UserRole + 1, poster)
+        self.set_item_poster(image)
 
         self.widget = MovieItemWidget(movie)
         parent.setItemWidget(self, self.widget)
+
+    def set_item_poster(self, image):
+        poster = QPixmap(image)
+        poster = poster.scaled(QSize(200, 270), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.setData(Qt.UserRole + 1, poster)
 
 
 class MovieItemWidget(QWidget):

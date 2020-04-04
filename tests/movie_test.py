@@ -17,6 +17,14 @@ class MovieTest(TestCase):
     def tearDown(self) -> None:
         """Remove data, folders, files after tests"""
 
+    def test_replace_poster(self):
+        movie_data = client.find_movie(id=11)
+        starwars_movie = Movie(movie_data)
+
+        poster_path = r"C:\Users\Robert\Desktop\movie_posters\gladiator_poster.jpg"
+        starwars_movie.set_poster(poster_path)
+
+
 
     def test_add_movie(self):
         movie = Movie(movie_data)

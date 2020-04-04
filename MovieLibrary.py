@@ -75,7 +75,7 @@ class MovieLibrary(QMainWindow):
                 movie_downloader = MovieDownloader(movie_data)
 
                 movie_downloader.signals.finished.connect(
-                    self.movie_browser.icon_view.add_movie
+                    self.movie_browser.movie_list_view.add_movie
                 )
 
                 self.downloader_pool.start(movie_downloader)
@@ -90,7 +90,7 @@ class MovieLibrary(QMainWindow):
         for movie in Movie.get_all():
             movie.delete()
 
-        self.movie_browser.icon_view.clear()
+        self.movie_browser.movie_list_view.clear()
 
 
 if __name__ == '__main__':

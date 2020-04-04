@@ -36,6 +36,19 @@ class Movie:
 
             return poster_file
 
+    def set_poster(self, new_poster_path):
+        old_poster_path = self.get_poster()
+
+        if old_poster_path:
+            shutil.copyfile(new_poster_path, old_poster_path)
+
+        else:
+            old_poster_path = os.path.join(poster_folder, os.path.basename(new_poster_path))
+            shutil.copyfile(new_poster_path, old_poster_path)
+
+            self.porster_path = f"/{os.path.basename(new_poster_path)}"
+            self.save()
+
     def set_favorited(self, value):
         self.favorited = value
         self.save()
