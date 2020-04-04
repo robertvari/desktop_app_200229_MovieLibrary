@@ -1,5 +1,13 @@
 import requests, os, shutil
 
+static_image_folder = os.path.join(os.path.dirname(__file__).replace("utilities", "static"), "images")
+
+
+def get_static_image(image_name):
+    static_path = os.path.join(static_image_folder, image_name)
+    if os.path.exists(static_path):
+        return static_path
+
 
 def get_image_data(image_url):
     response = requests.get(image_url)
@@ -23,6 +31,4 @@ def download_image(poster_folder, image_url):
 
 
 if __name__ == '__main__':
-    poster_folder = r"C:\Users\Robert\Downloads\Movie_Library"
-    image_url = "https://image.tmdb.org/t/p/w300/8fDtXi6gVw8WUMWGT9XFz7YwkuE.jpg"
-    download_image(poster_folder, image_url)
+    print(get_static_image("no_poster.jpg"))

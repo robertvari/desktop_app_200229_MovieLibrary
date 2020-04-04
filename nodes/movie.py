@@ -5,6 +5,7 @@ client = Client()
 user_folder = os.path.join(os.path.expanduser(r"~"), "Downloads")
 poster_folder = os.path.join(user_folder, "Movie_Library")
 
+from utilities.image_utils import get_static_image
 
 class Movie:
     server_path = 'https://image.tmdb.org/t/p/w300'
@@ -33,6 +34,8 @@ class Movie:
                         shutil.copyfileobj(response.raw, f)
 
             return poster_file
+
+        return get_static_image("no_poster.jpg")
 
     def set_poster(self, new_poster_path):
         old_poster_path = self.get_poster()
