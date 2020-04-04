@@ -19,6 +19,8 @@ def download_image(poster_folder, image_url):
             response.raw.decode_content = True
             shutil.copyfileobj(response.raw, f)
 
+        return poster_file
+
 
 if __name__ == '__main__':
     poster_folder = r"C:\Users\Robert\Downloads\Movie_Library"

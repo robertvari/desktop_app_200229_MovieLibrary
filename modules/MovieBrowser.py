@@ -3,10 +3,10 @@ from PySide2.QtWidgets import QWidget, QLineEdit, QListWidget, QListWidgetItem, 
 from PySide2.QtGui import QColor, QPen, QBrush, QPixmap, QFont, QImage
 from PySide2.QtCore import QSize, Qt, QRect, Signal, QThread, QThreadPool, QRunnable, QObject
 
-import time
+import tempfile
 
 from nodes.movie import Movie
-
+from utilities.image_utils import download_image
 
 class MovieBrowser(QWidget):
     def __init__(self):
@@ -67,8 +67,8 @@ class MovieListView(QListWidget):
         # set poster for movie object
         current_url = event.mimeData().urls()[0]
 
-        if "http" in current_url:
-            pass
+        if "http" in current_url.toString():
+            poster_path = download_image(tempfile.gettempdir(), current_url.toString())
         else:
             poster_path = event.mimeData().urls()[0].toLocalFile()
 
