@@ -10,9 +10,18 @@ client = Client()
 
 
 class MovieTest(TestCase):
+
+    def setUp(self) -> None:
+        """Setup data for tests"""
+
+    def tearDown(self) -> None:
+        """Remove data, folders, files after tests"""
+
+
     def test_add_movie(self):
         movie = Movie(movie_data)
         movie.save()
+        self.assertEqual()
 
         # find movie in database
         result = client.find_movie(movie.id)

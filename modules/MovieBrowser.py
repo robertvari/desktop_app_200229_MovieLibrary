@@ -1,7 +1,7 @@
 from PySide2.QtWidgets import QWidget, QLineEdit, QListWidget, QListWidgetItem, \
     QVBoxLayout, QItemDelegate, QPushButton, QHBoxLayout
 from PySide2.QtGui import QColor, QPen, QBrush, QPixmap, QFont, QImage
-from PySide2.QtCore import QSize, Qt, QRect, Signal, QThread
+from PySide2.QtCore import QSize, Qt, QRect, Signal, QThread, QThreadPool, QRunnable, QObject
 
 import time
 
@@ -177,6 +177,9 @@ class MovieItemWidget(QWidget):
 
     def favorite_clicked_action(self):
         self.favorite_clicked.emit(self.movie)
+
+
+
 
 
 class MovieWorker(QThread):
