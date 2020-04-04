@@ -24,6 +24,14 @@ class MovieTest(TestCase):
         poster_path = r"C:\Users\Robert\Desktop\movie_posters\gladiator_poster.jpg"
         starwars_movie.set_poster(poster_path)
 
+    def test_movie_data(self):
+        all_movies = Movie.get_all()
+
+        for movie in all_movies:
+            try:
+                print(movie.poster_path)
+            except AttributeError:
+                print("ERROR:", movie.__dict__)
 
 
     def test_add_movie(self):

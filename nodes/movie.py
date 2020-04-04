@@ -28,7 +28,6 @@ class Movie:
                     if not os.path.exists(poster_folder):
                         os.mkdir(poster_folder)
 
-
                     with open(poster_file, "wb") as f:
                         response.raw.decode_content = True
                         shutil.copyfileobj(response.raw, f)
