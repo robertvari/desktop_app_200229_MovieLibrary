@@ -1,5 +1,6 @@
 from PySide2.QtWidgets import QMainWindow, QApplication, QHBoxLayout, \
     QWidget, QAction
+from PySide2.QtCore import QThreadPool
 import sys
 
 from modules.CategorySelector import CategorySelector
@@ -9,12 +10,17 @@ from modules.AddMovieDialog import AddMovieDialog
 from nodes.movie import Movie
 from utilities import static_utils
 
+from modules.ThreadingModules import MovieDownloader
+
 
 class MovieLibrary(QMainWindow):
     def __init__(self):
         super(MovieLibrary, self).__init__()
         self.resize(800, 600)
         self.setWindowTitle("Movie Library")
+
+        self.downloader_pool = QThreadPool()
+        self.downloader_pool.setMaxThreadCount(8)
 
         # menu
         menu = self.menuBar()
@@ -57,9 +63,13 @@ class MovieLibrary(QMainWindow):
 
         if dialog.exec_():
             for movie_data in dialog.selected_movies:
-                movie = Movie(movie_data)
-                movie.save()
-                self.movie_browser.icon_view.add_movie(movie)
+                movie_downloader = MovieDownloader(movie_data)
+
+                movie_downloader.signals.finished.connect(
+                    self.movie_browser.icon_view.add_movie
+                )
+
+                self.downloader_pool.start(movie_downloader)
 
     def edit_movie_action(self):
         print("Edit selected movie")
