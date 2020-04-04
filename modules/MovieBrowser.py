@@ -1,12 +1,13 @@
 from PySide2.QtWidgets import QWidget, QLineEdit, QListWidget, QListWidgetItem, \
-    QVBoxLayout, QItemDelegate, QPushButton, QHBoxLayout
+    QVBoxLayout, QItemDelegate, QPushButton, QHBoxLayout, QProgressBar
 from PySide2.QtGui import QColor, QPen, QBrush, QPixmap, QFont, QImage
-from PySide2.QtCore import QSize, Qt, QRect, Signal, QThread, QThreadPool, QRunnable, QObject
+from PySide2.QtCore import QSize, Qt, QRect, Signal, QThread
 
 import tempfile
 
 from nodes.movie import Movie
 from utilities.image_utils import download_image
+
 
 class MovieBrowser(QWidget):
     def __init__(self):
@@ -17,9 +18,13 @@ class MovieBrowser(QWidget):
 
         self.search_field = QLineEdit()
         self.movie_list_view = MovieListView()
+        self.progressbar = QProgressBar()
+        self.progressbar.setVisible(False)
 
         main_layout.addWidget(self.search_field)
         main_layout.addWidget(self.movie_list_view)
+
+        main_layout.addWidget(self.progressbar)
 
 
 class MovieListView(QListWidget):

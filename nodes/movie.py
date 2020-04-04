@@ -21,7 +21,6 @@ class Movie:
             poster_file = os.path.join(poster_folder, self.poster_path.replace("/", ""))
 
             if not os.path.exists(poster_file):
-                print("Downloading new poster...")
                 poster_url = self.server_path + self.poster_path
                 response = requests.get(poster_url, stream=True)
 

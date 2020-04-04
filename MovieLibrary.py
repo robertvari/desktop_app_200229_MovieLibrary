@@ -71,14 +71,29 @@ class MovieLibrary(QMainWindow):
         dialog = AddMovieDialog(self)
 
         if dialog.exec_():
-            for movie_data in dialog.selected_movies:
+            selected_movies = dialog.selected_movies
+
+            self.movie_browser.progressbar.setVisible(True)
+            self.movie_browser.progressbar.setMaximum(len(selected_movies))
+
+            for movie_data in selected_movies:
                 movie_downloader = MovieDownloader(movie_data)
 
                 movie_downloader.signals.finished.connect(
-                    self.movie_browser.movie_list_view.add_movie
+                    self.add_movie_to_library
                 )
 
                 self.downloader_pool.start(movie_downloader)
+
+    def add_movie_to_library(self, movie_object):
+        self.movie_browser.movie_list_view.add_movie(movie_object)
+        self.movie_browser.progressbar.setValue(
+            self.movie_browser.progressbar.value() + 1
+        )
+
+        if self.movie_browser.progressbar.value() == self.movie_browser.progressbar.maximum() - 1:
+            self.movie_browser.progressbar.setVisible(False)
+            self.movie_browser.progressbar.setValue(0)
 
     def edit_movie_action(self):
         print("Edit selected movie")

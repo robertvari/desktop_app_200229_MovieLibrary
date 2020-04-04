@@ -4,8 +4,22 @@ QPushButton{
     border-radius: 3px;
     color: rgba(0, 0, 0, 0.71);
     font-size: 16px;
+    padding: 10px;
 }
 
 QPushButton:hover{
     background-color: lightblue;
+}
+
+QProgressBar{
+    border: 1px solid gray;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+}
+
+QProgressBar::chunk {
+    background-color: rgba(110, 161, 255, 0.52);
+    margin: 1px;
+    width: 10px;
 }
