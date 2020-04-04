@@ -18,5 +18,4 @@ class MovieDownloader(QRunnable):
     def run(self):
         self.movie_object.get_poster()
         self.movie_object.save()
-        print(f"Movie data saved: {self.movie_object.original_title}")
         self.signals.finished.emit(self.movie_object)

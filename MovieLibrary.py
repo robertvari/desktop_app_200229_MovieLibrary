@@ -23,6 +23,22 @@ class MovieLibrary(QMainWindow):
         self.downloader_pool.setMaxThreadCount(8)
 
         # menu
+        self.build_menu()
+
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+
+        main_layout = QHBoxLayout(central_widget)
+
+        self.category_selector = CategorySelector()
+        main_layout.addWidget(self.category_selector)
+
+        self.movie_browser = MovieBrowser()
+        main_layout.addWidget(self.movie_browser)
+
+        self.apply_style()
+
+    def build_menu(self):
         menu = self.menuBar()
 
         movies_menu = menu.addMenu("Movies")
@@ -39,18 +55,11 @@ class MovieLibrary(QMainWindow):
         delete_movie_action.triggered.connect(self.delete_movie_action)
         movies_menu.addAction(delete_movie_action)
 
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
+        movies_menu.addSeparator()
 
-        main_layout = QHBoxLayout(central_widget)
-
-        self.category_selector = CategorySelector()
-        main_layout.addWidget(self.category_selector)
-
-        self.movie_browser = MovieBrowser()
-        main_layout.addWidget(self.movie_browser)
-
-        self.apply_style()
+        delete_all_movie_action = QAction("Delete All Movie", movies_menu)
+        delete_all_movie_action.triggered.connect(self.delete_all_movies_action)
+        movies_menu.addAction(delete_all_movie_action)
 
     def apply_style(self):
         css_path = static_utils.css_path
@@ -76,6 +85,12 @@ class MovieLibrary(QMainWindow):
 
     def delete_movie_action(self):
         print("Delete selected movies")
+
+    def delete_all_movies_action(self):
+        for movie in Movie.get_all():
+            movie.delete()
+
+        self.movie_browser.icon_view.clear()
 
 
 if __name__ == '__main__':

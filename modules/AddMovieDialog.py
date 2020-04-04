@@ -26,13 +26,24 @@ class AddMovieDialog(QDialog):
         add_bttn = QPushButton("Add Movie")
         add_bttn.clicked.connect(self.accept)
 
+        add_all_bttn = QPushButton("Add All Movies")
+        add_all_bttn.clicked.connect(self.add_all_action)
+
         cancel_bttn = QPushButton("Cancel")
         cancel_bttn.clicked.connect(self.reject)
+
         button_layout.addWidget(add_bttn)
+        button_layout.addWidget(add_all_bttn)
         button_layout.addWidget(cancel_bttn)
 
     def keyPressEvent(self, event):
         event.ignore()
+
+    def add_all_action(self):
+        for i in range(self.result_list.count()):
+            self.result_list.setItemSelected(self.result_list.item(i), True)
+
+        self.accept()
 
     def accept(self):
         selected_items = self.result_list.selectedItems()

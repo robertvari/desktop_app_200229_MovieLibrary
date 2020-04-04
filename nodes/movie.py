@@ -45,16 +45,12 @@ class Movie:
 
     def delete(self):
         client.delete_movie(self.id)
-        os.remove(self.get_poster())
+        if self.get_poster():
+            os.remove(self.get_poster())
 
     @staticmethod
     def get_all():
-        movies = []
-
-        for movie_data in client.get_movies():
-            movies.append(Movie(movie_data))
-
-        return movies
+        return [Movie(movie_data) for movie_data in client.get_movies()]
 
     def __str__(self):
         return f"{self.original_title} ({self.release_date})"
