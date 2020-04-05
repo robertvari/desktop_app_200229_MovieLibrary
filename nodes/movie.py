@@ -51,6 +51,14 @@ class Movie:
             self.porster_path = f"/{os.path.basename(new_poster_path)}"
             self.save()
 
+    def get_filter_set(self):
+        filter_set = {self.original_title}
+        filter_set.update(self.genre_ids)
+        filter_set.add(self.original_language)
+        filter_set.add(self.release_date.split("-")[0])
+
+        return filter_set
+
     def set_favorited(self, value):
         self.favorited = value
         self.save()

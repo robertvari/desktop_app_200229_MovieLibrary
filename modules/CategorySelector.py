@@ -24,19 +24,14 @@ class CategorySelector(QTreeWidget):
     def get_filter(self):
         selected_items = self.selectedItems()
 
-        filter_data = {}
+        filter_set = []
 
         for item in selected_items:
             if isinstance(item, ParentCategory):
                 continue
+            filter_set.append(item.name)
 
-            category_name = item.parent().text(0)
-            if not category_name in filter_data:
-                filter_data[category_name] = []
-
-            filter_data[category_name].append(item.name)
-
-        self.filter_activated.emit(filter_data)
+        self.filter_activated.emit(set(filter_set))
 
     def refresh(self):
         self.clear()
