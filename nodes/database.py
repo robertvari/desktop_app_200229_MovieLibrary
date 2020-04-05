@@ -48,7 +48,7 @@ class Client:
         for movie_genres in all_genres:
             [genre_list.append(i) for i in movie_genres if not i in genre_list]
 
-        return sorted(genre_list)
+        return sorted([str(i) for i in genre_list])
 
     def find_movie(self, id):
         return self.collection.find_one({"id": id})

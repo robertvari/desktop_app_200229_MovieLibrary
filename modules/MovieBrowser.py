@@ -42,6 +42,22 @@ class MovieListView(QListWidget):
 
         self.refresh()
 
+    def do_filter(self, filter_data: dict):
+        movie_item_list = self.get_all_movie_items()
+
+        if not filter_data:
+            for movie_item in movie_item_list:
+                movie_item.setHidden(False)
+        else:
+            for movie_item in movie_item_list:
+                if not movie_item.set_filter(filter_data):
+                    movie_item.setHidden(True)
+                else:
+                    movie_item.setHidden(False)
+
+    def get_all_movie_items(self):
+        return [self.item(i) for i in range(self.count())]
+
     def check_drag_data(self, event):
 
         if event.mimeData().urls():
@@ -187,6 +203,27 @@ class MovieItem(QListWidgetItem):
 
         self.widget = MovieItemWidget(movie)
         parent.setItemWidget(self, self.widget)
+
+    def set_filter(self, filter_data: dict):
+        # check for release date
+        filter_states = []
+
+        if filter_data.get("Release Date"):
+            date_list = filter_data.get("Release Date")
+            result = [i for i in date_list if i in self.movie.release_date]
+            if result:
+                filter_states.append(True)
+
+        if filter_data.get("Genre"):
+            genre_list = set(filter_data.get("Genre"))
+            movie_genre_list = set(self.movie.genre_ids)
+
+            if genre_list.issubset(movie_genre_list):
+                filter_states.append(True)
+
+        if filter_states:
+            return True
+        return False
 
     def set_item_poster(self, image):
         poster = QPixmap(image)

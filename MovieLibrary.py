@@ -38,6 +38,8 @@ class MovieLibrary(QMainWindow):
 
         self.apply_style()
 
+        self.category_selector.filter_activated.connect(self.movie_browser.movie_list_view.do_filter)
+
     def build_menu(self):
         menu = self.menuBar()
 
