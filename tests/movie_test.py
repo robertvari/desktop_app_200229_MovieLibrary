@@ -3,7 +3,7 @@ import os
 
 from nodes.movie import Movie
 from utilities.MovieDB import find_movie
-from utilities.database import Client
+from nodes.database import Client
 
 movie_data = find_movie("Star Wars")[0]
 client = Client()
@@ -33,11 +33,9 @@ class MovieTest(TestCase):
             except AttributeError:
                 print("ERROR:", movie.__dict__)
 
-
     def test_add_movie(self):
         movie = Movie(movie_data)
         movie.save()
-        self.assertEqual()
 
         # find movie in database
         result = client.find_movie(movie.id)
