@@ -1,9 +1,11 @@
 from PySide2.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QListWidget, QListWidgetItem, QPushButton, QHBoxLayout
 
 from utilities.MovieDB import find_movie
-
+from nodes.database import Client
 
 class AddMovieDialog(QDialog):
+    client = Client()
+
     def __init__(self, parent):
         super(AddMovieDialog, self).__init__(parent)
         self.setWindowTitle("Add Movie")
@@ -50,7 +52,7 @@ class AddMovieDialog(QDialog):
         if not selected_items:
             return
 
-        self.selected_movies = [i.movie_data for i in selected_items]
+        self.selected_movies = [i.movie_data for i in selected_items if not self.client.find_movie(i.movie_data["id"])]
         super(AddMovieDialog, self).accept()
 
     def find_action(self):

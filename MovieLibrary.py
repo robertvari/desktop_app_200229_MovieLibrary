@@ -70,7 +70,7 @@ class MovieLibrary(QMainWindow):
     def add_movie_action(self):
         dialog = AddMovieDialog(self)
 
-        if dialog.exec_():
+        if dialog.exec_() and dialog.selected_movies:
             selected_movies = dialog.selected_movies
 
             self.movie_browser.progressbar.setVisible(True)
@@ -95,6 +95,9 @@ class MovieLibrary(QMainWindow):
             self.movie_browser.progressbar.setVisible(False)
             self.movie_browser.progressbar.setValue(0)
 
+            # refresh categories
+            self.category_selector.refresh()
+
     def edit_movie_action(self):
         print("Edit selected movie")
 
@@ -106,6 +109,7 @@ class MovieLibrary(QMainWindow):
             movie.delete()
 
         self.movie_browser.movie_list_view.clear()
+        self.category_selector.refresh()
 
 
 if __name__ == '__main__':

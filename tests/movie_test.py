@@ -33,6 +33,13 @@ class MovieTest(TestCase):
             except AttributeError:
                 print("ERROR:", movie.__dict__)
 
+    def test_has_movie(self):
+        #  check if current movie has in database
+        movie = Movie(movie_data)
+        movie.save()
+
+        self.assertIsNotNone(client.find_movie(movie_data["id"]))
+
     def test_add_movie(self):
         movie = Movie(movie_data)
         movie.save()
