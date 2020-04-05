@@ -1,7 +1,9 @@
-from PySide2.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QListWidget, QListWidgetItem, QPushButton, QHBoxLayout
+from PySide2.QtWidgets import QDialog, QVBoxLayout, QLineEdit, QListWidget, QListWidgetItem, QPushButton, \
+    QHBoxLayout, QCheckBox
 
 from utilities.MovieDB import find_movie
 from nodes.database import Client
+
 
 class AddMovieDialog(QDialog):
     client = Client()
@@ -13,10 +15,16 @@ class AddMovieDialog(QDialog):
 
         self.selected_movies = None
 
+        search_layout = QHBoxLayout()
+        main_layout.addLayout(search_layout)
+
         self.search_field = QLineEdit()
         self.search_field.returnPressed.connect(self.find_action)
         self.search_field.setPlaceholderText("Search movies...")
-        main_layout.addWidget(self.search_field)
+        search_layout.addWidget(self.search_field)
+
+        self.find_all_checkbx = QCheckBox("Find All")
+        search_layout.addWidget(self.find_all_checkbx)
 
         self.result_list = QListWidget()
         self.result_list.setSelectionMode(QListWidget.ExtendedSelection)
@@ -60,7 +68,7 @@ class AddMovieDialog(QDialog):
         if len(movie_title):
             self.result_list.clear()
 
-            for item in find_movie(movie_title):
+            for item in find_movie(movie_title, all_pages=self.find_all_checkbx.isChecked()):
                 MovieItem(self.result_list, item)
 
 
