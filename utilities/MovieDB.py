@@ -1,6 +1,7 @@
 import tmdbsimple as tmdb
 
 tmdb.API_KEY = "83cbec0139273280b9a3f8ebc9e35ca9"
+image_server = 'https://image.tmdb.org/t/p/w300'
 search = tmdb.Search()
 genre_list = tmdb.Genres().movie_list()
 
@@ -28,4 +29,7 @@ def check_data_fields(data):
 
 
 if __name__ == '__main__':
-    result = find_movie("Alien", all_pages=True)
+    result = find_movie("Alien")
+    for i in result:
+        if i.get("poster_path"):
+            print(f"{image_server}{i.get('poster_path')}")
