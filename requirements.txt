@@ -6,4 +6,4 @@ PySide2==5.14.1
 requests==2.23.0
 shiboken2==5.14.1
 tmdbsimple==2.2.0
-urllib3==1.25.8
+urllib3==1.26.5
